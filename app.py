@@ -81,7 +81,7 @@ def main():
                 st.progress(progress)
 
     selected_user = st.selectbox('Select User:', users)
-    task = st.text_input('Write your today's work')
+    task = st.text_input('Write your today\'s work:')
     
     if selected_user and task:
         if st.button('Submit'):
