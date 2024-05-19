@@ -4,14 +4,37 @@ from datetime import datetime, timedelta
 import os
 import time
 
-page_bg_img = """
-            <style>
-            [data-testid="stAppViewContainer"] {
-            background: linear-gradient(to top, #00ffff, #ffffff);
-            opacity: 1;}
-            </style>
-            """
-st.markdown(page_bg_img, unsafe_allow_html=True)
+st.markdown(
+    """
+    <style>
+    [data-testid="stAppViewContainer"] {
+        background: var(--background-color);
+        transition: background 0.3s ease;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# JavaScript to detect dark mode and set CSS variable
+st.markdown(
+    """
+    <script>
+    (function() {
+        const root = document.documentElement;
+        const observer = new MutationObserver(() => {
+            const darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            # root.style.setProperty('--background-color', darkMode ? 'linear-gradient(to top, #000000, #333333)' : 'linear-gradient(to top, #ffffff, #00ff00)');
+        });
+        observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+        observer.disconnect();
+    })();
+    </script>
+    """,
+    unsafe_allow_html=True
+)
+
+
 github_urls = {
     "Deep Patel": "https://github.com/coderkage",
     "Prayas Raj": "https://github.com/Prayas7632",
@@ -141,6 +164,14 @@ def main():
             st.subheader(user)
             task_df = pd.read_csv(task_file)
             st.table(task_df)
+            csv = task_df.to_csv(index=False).encode('utf-8')
+        
+            st.download_button(
+                label=f"Download {user}'s data as CSV",
+                data=csv,
+                file_name=f'{user}_tasks.csv',
+                mime='csv',
+            )
 
     selected_user = st.selectbox('Select User to Edit Work:', users)
     if selected_user:
